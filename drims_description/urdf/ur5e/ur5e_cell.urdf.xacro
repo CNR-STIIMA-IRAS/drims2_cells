@@ -1,0 +1,461 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="platform">
+
+  <!-- ========================================================= -->
+  <!-- UR SETUP -->
+  <!-- ========================================================= -->
+
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+
+  <xacro:arg name="ur_type" default="ur5e"/>
+  <xacro:arg name="name" default="ur5e"/>
+  <xacro:arg name="robot_ip" default="0.0.0.0"/>
+  <xacro:arg name="tf_prefix" default=""/>
+
+  <xacro:arg name="joint_limit_params" default="$(find drims_description)/config/$(arg ur_type)/joint_limits.yaml"/>
+  <xacro:arg name="kinematics_params" default="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
+  <xacro:arg name="physical_params" default="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"/>
+  <xacro:arg name="visual_params" default="$(find ur_description)/config/$(arg ur_type)/visual_parameters.yaml"/>
+  <xacro:arg name="transmission_hw_interface" default=""/>
+  <xacro:arg name="safety_limits" default="false"/>
+  <xacro:arg name="safety_pos_margin" default="0.15"/>
+  <xacro:arg name="safety_k_position" default="20"/>
+  <!-- ros2_control related parameters -->
+  <xacro:arg name="headless_mode" default="false" />
+  <xacro:arg name="script_filename" default="$(find ur_client_library)/resources/external_control.urscript"/>
+  <xacro:arg name="input_recipe_filename" default="$(find ur_robot_driver)/resources/rtde_input_recipe.txt"/>
+  <xacro:arg name="output_recipe_filename" default="$(find ur_robot_driver)/resources/rtde_output_recipe.txt"/>
+  <xacro:arg name="reverse_ip" default="0.0.0.0"/>
+  <xacro:arg name="script_command_port" default="50004"/>
+  <xacro:arg name="reverse_port" default="50001"/>
+  <xacro:arg name="script_sender_port" default="50002"/>
+  <xacro:arg name="trajectory_port" default="50003"/>
+  <!--   tool communication related parameters-->
+  <xacro:arg name="use_tool_communication" default="true" />
+  <xacro:arg name="tool_voltage" default="24" />
+  <xacro:arg name="tool_parity" default="0" />
+  <xacro:arg name="tool_baud_rate" default="115200" />
+  <xacro:arg name="tool_stop_bits" default="1" />
+  <xacro:arg name="tool_rx_idle_chars" default="1.5" />
+  <xacro:arg name="tool_tx_idle_chars" default="3.5" />
+  <xacro:arg name="tool_device_name" default="/tmp/ttyUR" />
+  <xacro:arg name="tool_tcp_port" default="54321" />
+  <xacro:arg name="fake_sensor_commands" default="false" />
+  <xacro:arg name="sim_gazebo" default="false" />
+  <xacro:arg name="sim_ignition" default="false" />
+  <xacro:arg name="simulation_controllers" default="" />
+
+  <xacro:arg name="use_fake_hardware" default="true"/>
+
+
+ <!-- initial position for simulations (Fake Hardware, Gazebo, Ignition) -->
+ <xacro:arg name="initial_positions_file" default="$(find drims_description)/config/$(arg ur_type)/initial_positions.yaml"/>
+
+ <!-- convert to property to use substitution in function -->
+ <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)"/>  
+
+  <!-- ========================================================= -->
+  <!-- TABLE ARGS -->
+  <!-- ========================================================= -->
+
+  <xacro:arg name="table_length" default="1.3"/>
+  <xacro:arg name="table_width" default="1.0"/>
+  <xacro:arg name="table_height" default="0.75"/>
+
+  <!-- mirror as properties -->
+  <xacro:property name="table_length" value="$(arg table_length)"/>
+  <xacro:property name="table_width" value="$(arg table_width)"/>
+  <xacro:property name="table_height" value="$(arg table_height)"/>
+
+  <!-- ========================================================= -->
+  <!-- POSES -->
+  <!-- ========================================================= -->
+
+  <xacro:arg name="robot_xyz" default="0.4 0.5 0"/>
+  <xacro:arg name="robot_rpy" default="0 0 0"/>
+
+  <xacro:arg name="camera_xyz" default="0.2 0.6 1.2"/>
+  <xacro:arg name="camera_rpy" default="0 0 0"/>
+
+  <xacro:arg name="barrier_back_offset" default="-0.8 0 0.4"/>
+  <xacro:arg name="barrier_left_offset" default="0 -0.8 0.4"/>
+  <xacro:arg name="barrier_right_offset" default="0 0.8 0.4"/>
+  <xacro:arg name="barrier_top_offset" default="0 0 1.3"/>
+
+  <!-- mirror as properties -->
+  <xacro:property name="robot_xyz" value="$(arg robot_xyz)"/>
+  <xacro:property name="robot_rpy" value="$(arg robot_rpy)"/>
+
+  <xacro:property name="camera_xyz" value="$(arg camera_xyz)"/>
+  <xacro:property name="camera_rpy" value="$(arg camera_rpy)"/>
+
+  <xacro:property name="barrier_back_offset" value="$(arg barrier_back_offset)"/>
+  <xacro:property name="barrier_left_offset" value="$(arg barrier_left_offset)"/>
+  <xacro:property name="barrier_right_offset" value="$(arg barrier_right_offset)"/>
+  <xacro:property name="barrier_top_offset" value="$(arg barrier_top_offset)"/>
+
+  <material name="gray">
+    <color rgba="0.5 0.5 0.5 1.0"/>
+  </material>
+
+  <material name="gray_transparent">
+    <color rgba="0.5 0.5 0.5 0.5"/>
+  </material>
+
+  <material name="red_transparent">
+    <color rgba="1.0 0 0 0.5"/>
+  </material>
+
+  <!-- ========================================================= -->
+  <!-- WORLD -->
+  <!-- ========================================================= -->
+
+  <link name="world"/>
+
+  <link name="table_corner"/>
+  <joint name="world_to_table_corner" type="fixed">
+    <parent link="world"/>
+    <child link="table_corner"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ========================================================= -->
+  <!-- TABLE -->
+  <!-- ========================================================= -->
+
+  <link name="table_top">
+
+    <visual>
+      <geometry>
+        <box size="${table_length} ${table_width} ${table_height}"/>
+      </geometry>
+      <material name="gray"/>
+      <origin xyz="${table_length/2} ${table_width/2} -${table_height/2}" rpy="0 0 0"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="${table_length} ${table_width} ${table_height}"/>
+      </geometry>
+      <material name="red_transparent"/>
+      <origin xyz="${table_length/2} ${table_width/2} -${table_height/2}" rpy="0 0 0"/>
+    </collision>
+
+  </link>
+
+  <joint name="table_corner_to_table_top" type="fixed">
+    <parent link="table_corner"/>
+    <child link="table_top"/>
+    <origin xyz="0 0 ${table_height}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ========================================================= -->
+  <!-- ROBOT -->
+  <!-- ========================================================= -->
+
+  <xacro:ur_robot
+      name="$(arg name)"
+      tf_prefix="$(arg tf_prefix)"
+      parent="table_top"
+      joint_limits_parameters_file="$(arg joint_limit_params)"
+      kinematics_parameters_file="$(arg kinematics_params)"
+      physical_parameters_file="$(arg physical_params)"
+      visual_parameters_file="$(arg visual_params)"
+      transmission_hw_interface="$(arg transmission_hw_interface)"
+      safety_limits="$(arg safety_limits)"
+      safety_pos_margin="$(arg safety_pos_margin)"
+      safety_k_position="$(arg safety_k_position)"
+      use_fake_hardware="$(arg use_fake_hardware)"
+      fake_sensor_commands="$(arg fake_sensor_commands)"
+      sim_gazebo="$(arg sim_gazebo)"
+      sim_ignition="$(arg sim_ignition)"
+      headless_mode="$(arg headless_mode)"
+      initial_positions="${xacro.load_yaml(initial_positions_file)}"
+      use_tool_communication="$(arg use_tool_communication)"
+      tool_voltage="$(arg tool_voltage)"
+      tool_parity="$(arg tool_parity)"
+      tool_baud_rate="$(arg tool_baud_rate)"
+      tool_stop_bits="$(arg tool_stop_bits)"
+      tool_rx_idle_chars="$(arg tool_rx_idle_chars)"
+      tool_tx_idle_chars="$(arg tool_tx_idle_chars)"
+      tool_device_name="$(arg tool_device_name)"
+      tool_tcp_port="$(arg tool_tcp_port)"
+      robot_ip="$(arg robot_ip)"
+      script_filename="$(arg script_filename)"
+      output_recipe_filename="$(arg output_recipe_filename)"
+      input_recipe_filename="$(arg input_recipe_filename)"
+      reverse_ip="$(arg reverse_ip)"
+      script_command_port="$(arg script_command_port)"
+      reverse_port="$(arg reverse_port)"
+      script_sender_port="$(arg script_sender_port)"
+      trajectory_port="$(arg trajectory_port)"
+      >
+      <origin xyz="${robot_xyz}" rpy="${robot_rpy}"/>
+
+  </xacro:ur_robot>
+
+  <!-- ========================================================= -->
+  <!-- CAMERA -->
+  <!-- ========================================================= -->
+
+  <!-- ========================================================= -->
+  <!-- CAMERA FRAME (RECTANGLE + POST + TOP BAR) -->
+  <!-- ========================================================= -->
+
+  <xacro:macro name="camera_frame"
+    params="
+      name
+      parent
+      xyz
+      rpy
+      frame_x
+      frame_y
+      beam
+      height
+      post_height
+    ">
+
+    <!-- ======================================================= -->
+    <!-- BASE FRAME LINKS -->
+    <!-- ======================================================= -->
+
+    <!-- FRONT BEAM (y = 0) -->
+    <link name="${name}_front">
+      <visual>
+        <geometry>
+          <box size="${frame_x} ${beam} ${beam}"/>
+        </geometry>
+        <material name="gray_transparent"/>
+        <origin xyz="${frame_x/2} ${beam/2} ${beam/2}" rpy="0 0 0"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${frame_x} ${beam} ${beam}"/>
+        </geometry>
+        <material name="red_transparent"/>
+        <origin xyz="${frame_x/2} ${beam/2} ${beam/2}" rpy="0 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="${name}_front_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${name}_front"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+
+    <!-- BACK BEAM (y = frame_y - beam) -->
+    <link name="${name}_back">
+      <visual>
+        <geometry>
+          <box size="${frame_x} ${beam} ${beam}"/>
+        </geometry>
+        <material name="gray_transparent"/>
+        <origin xyz="${frame_x/2} ${frame_y - beam/2} ${beam/2}" rpy="0 0 0"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${frame_x} ${beam} ${beam}"/>
+        </geometry>
+        <material name="red_transparent"/>
+        <origin xyz="${frame_x/2} ${frame_y - beam/2} ${beam/2}" rpy="0 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="${name}_back_joint" type="fixed">
+      <parent link="${name}_front"/>
+      <child link="${name}_back"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- LEFT BEAM (x = 0) -->
+    <link name="${name}_left">
+      <visual>
+        <geometry>
+          <box size="${beam} ${frame_y} ${beam}"/>
+        </geometry>
+        <material name="gray_transparent"/>
+        <origin xyz="${beam/2} ${frame_y/2} ${beam/2}" rpy="0 0 0"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${beam} ${frame_y} ${beam}"/>
+        </geometry>
+        <material name="red_transparent"/>
+        <origin xyz="${beam/2} ${frame_y/2} ${beam/2}" rpy="0 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="${name}_left_joint" type="fixed">
+      <parent link="${name}_front"/>
+      <child link="${name}_left"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- RIGHT BEAM (x = frame_x - beam) -->
+    <link name="${name}_right">
+      <visual>
+        <geometry>
+          <box size="${beam} ${frame_y} ${beam}"/>
+        </geometry>
+        <material name="gray_transparent"/>
+        <origin xyz="${frame_x - beam/2} ${frame_y/2} ${beam/2}" rpy="0 0 0"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${beam} ${frame_y} ${beam}"/>
+        </geometry>
+        <material name="red_transparent"/>
+        <origin xyz="${frame_x - beam/2} ${frame_y/2} ${beam/2}" rpy="0 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="${name}_right_joint" type="fixed">
+      <parent link="${name}_front"/>
+      <child link="${name}_right"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- ======================================================= -->
+    <!-- VERTICAL POST  -->
+    <!-- ======================================================= -->
+
+    <link name="${name}_post">
+      <visual>
+        <geometry>
+          <box size="${beam} ${beam} ${post_height}"/>
+        </geometry>
+        <material name="gray_transparent"/>
+        <origin xyz="${beam/2} ${beam/2+frame_y/2} ${post_height/2}" rpy="0 0 0"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${beam} ${beam} ${post_height}"/>
+        </geometry>
+        <material name="red_transparent"/>
+        <origin xyz="${beam/2} ${beam/2+frame_y/2} ${post_height/2}" rpy="0 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="${name}_post_joint" type="fixed">
+      <parent link="${name}_front"/>
+      <child link="${name}_post"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- ======================================================= -->
+    <!-- TOP HORIZONTAL CAMERA BAR -->
+    <!-- ======================================================= -->
+
+    <link name="${name}_top_bar">
+      <visual>
+        <geometry>
+          <box size="${frame_x} ${beam} ${beam}"/>
+        </geometry>
+        <material name="gray_transparent"/>
+        <origin xyz="${frame_x/2} ${beam/2+frame_y/2} ${post_height}" rpy="0 0 0"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${frame_x} ${beam} ${beam}"/>
+        </geometry>
+        <material name="red_transparent"/>
+        <origin xyz="${frame_x/2} ${beam/2+frame_y/2} ${post_height}" rpy="0 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="${name}_top_bar_joint" type="fixed">
+      <parent link="${name}_post"/>
+      <child link="${name}_top_bar"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+  </xacro:macro>
+
+
+  <xacro:camera_frame
+    name="camera_frame"
+    parent="table_top"
+    xyz="0.7 1.0 0"
+    rpy="0 0 -1.57"
+    frame_x="0.8"
+    frame_y="0.6"
+    beam="0.05"
+    height="0.7"
+    post_height="0.8"/>
+
+  <!-- ========================================================= -->
+  <!-- SAFETY BARRIERS -->
+  <!-- ========================================================= -->
+
+  <xacro:macro name="safety_barrier" params="name parent xyz size">
+
+    <link name="${name}">
+      <visual>
+        <geometry>
+          <box size="${size}"/>
+        </geometry>
+        <material name="red_transparent"/>
+      </visual>
+
+      <collision>
+        <geometry>
+          <box size="${size}"/>
+        </geometry>
+        <material name="red_transparent"/>
+      </collision>
+    </link>
+
+    <joint name="joint_${name}" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${name}"/>
+      <origin xyz="${xyz}" rpy="0 0 0"/>
+    </joint>
+
+  </xacro:macro>
+
+  <xacro:safety_barrier name="barrier_back" parent="base_link"
+    xyz="${barrier_back_offset}"
+    size="0.1 ${table_width} 0.8"/>
+
+  <xacro:safety_barrier name="barrier_left" parent="base_link"
+    xyz="${barrier_left_offset}"
+    size="${table_length} 0.1 0.8"/>
+
+  <xacro:safety_barrier name="barrier_right" parent="base_link"
+    xyz="${barrier_right_offset}"
+    size="${table_length} 0.1 0.8"/>
+
+  <xacro:safety_barrier name="barrier_top" parent="base_link"
+    xyz="${barrier_top_offset}"
+    size="${table_length} ${table_width} 0.1"/>
+
+  <!-- ========================================================= -->
+  <!-- GRIPPER  -->
+  <!-- ========================================================= -->
+
+  <xacro:include filename="$(find robotiq_hande_description)/urdf/robotiq_hande_gripper.xacro"/>
+
+  <xacro:robotiq_hande_gripper
+    name="robotiq_hande_gripper"
+    prefix=""
+    parent="tool0"
+    grip_pos_min="0.0"
+    grip_pos_max="0.025"
+    tty="/tmp/ttyUR"
+    baudrate="115200"
+    parity="N"
+    data_bits="8"
+    stop_bit="1"
+    slave_id="9"
+    use_fake_hardware="$(arg use_fake_hardware)"
+  />
+
+  <link name="tip"/>
+
+  <joint name="tool0_to_tip" type="fixed">
+    <parent link="tool0"/>
+    <child link="tip"/>
+    <origin xyz="0 0 0.15" rpy="0 0 0"/>
+  </joint>
+
+</robot>

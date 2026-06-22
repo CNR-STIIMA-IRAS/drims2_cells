@@ -1,0 +1,39 @@
+motion_server_node:
+  ros__parameters:
+    # MoveIt 2 planning group used for motion planning
+    move_group_name: "manipulator"
+
+    # Real end-effector link defined in the robot model / has to match MoveIt configuration
+    end_effector_name: "tip"
+
+    # Optional auxiliary TF frame used as a virtual motion target.
+    # Set it equal to end_effector_name if no virtual end-effector is needed.
+    # virtual_end_effector: "auxiliary_tip"
+
+    # Robot base reference frame / has to match MoveIt configuration
+    base_link_name: "table_top"
+
+    # Joints belonging to the selected MoveIt planning group
+    joint_names:
+      - "shoulder_pan_joint"
+      - "shoulder_lift_joint"
+      - "elbow_joint"
+      - "wrist_1_joint"
+      - "wrist_2_joint"
+      - "wrist_3_joint"
+
+    # Cartesian workspace limits
+    workspace_min_corner: [-2.0, -2.0, -2.0]
+    workspace_max_corner: [2.0, 2.0, 2.0]
+    workspace_frame_id: "base_link"
+
+    # Cartesian path parameters
+    # cartesian_max_step is the interpolation step in meters.
+    # cartesian_fraction_threshold is the minimum accepted valid path fraction.
+    cartesian_max_step: 0.01
+    cartesian_fraction_threshold: 0.99
+    cartesian_avoid_collisions: true
+
+    # Velocity and acceleration scaling factors
+    max_velocity: 0.5
+    max_acceleration: 0.5
