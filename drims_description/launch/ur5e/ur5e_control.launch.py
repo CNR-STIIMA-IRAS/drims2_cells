@@ -5,8 +5,6 @@ from launch_ros.substitutions import FindPackageShare
 from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.actions import Node
 from launch.conditions import IfCondition, UnlessCondition
-import os
-from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def launch_setup(context, *args, **kwargs):
@@ -21,6 +19,8 @@ def launch_setup(context, *args, **kwargs):
       "use_fake_hardware:=", LaunchConfiguration("fake"),
       " ",
       "robot_ip:=", LaunchConfiguration("robot_ip"),
+      " ",
+      "config_file:=", LaunchConfiguration("cell_configuration_file"),
   ])
   robot_description = {
       'robot_description': ParameterValue(robot_description_content, value_type=str)
@@ -89,6 +89,9 @@ def generate_launch_description():
   launch_args = []
   launch_args.append(DeclareLaunchArgument(name="fake", default_value="true", description="use fake hardware"))
   launch_args.append(DeclareLaunchArgument(name="robot_ip", default_value="0.0.0.0", description="Robot ip"))
+  launch_args.append(DeclareLaunchArgument(name="cell_configuration_file",
+                                           default_value=PathJoinSubstitution([FindPackageShare("drims_description"), "config", "ur5e", "default_configuration.yaml"]),
+                                           description="yaml file to configure the cell geometry"))
 
   ld = LaunchDescription(launch_args+[OpaqueFunction(function=launch_setup)])
     

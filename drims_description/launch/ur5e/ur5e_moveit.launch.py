@@ -3,7 +3,6 @@ from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Command
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch_ros.parameter_descriptions import ParameterValue
 from moveit_configs_utils import MoveItConfigsBuilder
 
 def generate_launch_description():
@@ -21,7 +20,7 @@ def launch_setup(context):
         MoveItConfigsBuilder("manipulator", package_name="drims_ur5e_moveit_config")
         .robot_description_semantic(file_path=srdf_path)
         .planning_scene_monitor(
-            publish_robot_description=True,
+            publish_robot_description=False,
             publish_robot_description_semantic=True,
             publish_planning_scene=True
         )

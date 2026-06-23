@@ -48,62 +48,52 @@
   <xacro:arg name="use_fake_hardware" default="true"/>
 
 
- <!-- initial position for simulations (Fake Hardware, Gazebo, Ignition) -->
- <xacro:arg name="initial_positions_file" default="$(find drims_description)/config/$(arg ur_type)/initial_positions.yaml"/>
+  <!-- initial position for simulations (Fake Hardware, Gazebo, Ignition) -->
+  <xacro:arg name="initial_positions_file" default="$(find drims_description)/config/$(arg ur_type)/initial_positions.yaml"/>
 
- <!-- convert to property to use substitution in function -->
- <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)"/>  
+  <!-- convert to property to use substitution in function -->
+  <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)"/>  
 
   <!-- ========================================================= -->
   <!-- TABLE ARGS -->
   <!-- ========================================================= -->
 
-  <xacro:arg name="table_length" default="1.3"/>
-  <xacro:arg name="table_width" default="1.0"/>
-  <xacro:arg name="table_height" default="0.75"/>
+  <xacro:arg name="config_file"
+           default="$(find drims_description)/config/ur5e/default_configuration.yaml"/>
 
-  <!-- mirror as properties -->
-  <xacro:property name="table_length" value="$(arg table_length)"/>
-  <xacro:property name="table_width" value="$(arg table_width)"/>
-  <xacro:property name="table_height" value="$(arg table_height)"/>
+  <xacro:property name="config_file_path"
+                  value="$(arg config_file)"/>
 
-  <!-- ========================================================= -->
-  <!-- POSES -->
-  <!-- ========================================================= -->
+  <xacro:property name="config"
+                  value="${xacro.load_yaml(config_file_path)}"/>
 
-  <xacro:arg name="robot_xyz" default="0.4 0.5 0"/>
-  <xacro:arg name="robot_rpy" default="0 0 0"/>
 
-  <xacro:arg name="camera_xyz" default="0.2 0.6 1.2"/>
-  <xacro:arg name="camera_rpy" default="0 0 0"/>
-
-  <xacro:arg name="barrier_back_offset" default="-0.8 0 0.4"/>
-  <xacro:arg name="barrier_left_offset" default="0 -0.8 0.4"/>
-  <xacro:arg name="barrier_right_offset" default="0 0.8 0.4"/>
-  <xacro:arg name="barrier_top_offset" default="0 0 1.3"/>
-
-  <!-- mirror as properties -->
-  <xacro:property name="robot_xyz" value="$(arg robot_xyz)"/>
-  <xacro:property name="robot_rpy" value="$(arg robot_rpy)"/>
-
-  <xacro:property name="camera_xyz" value="$(arg camera_xyz)"/>
-  <xacro:property name="camera_rpy" value="$(arg camera_rpy)"/>
-
-  <xacro:property name="barrier_back_offset" value="$(arg barrier_back_offset)"/>
-  <xacro:property name="barrier_left_offset" value="$(arg barrier_left_offset)"/>
-  <xacro:property name="barrier_right_offset" value="$(arg barrier_right_offset)"/>
-  <xacro:property name="barrier_top_offset" value="$(arg barrier_top_offset)"/>
+  <xacro:property name="table_length" value="${config['table']['length']}"/>
+  <xacro:property name="table_width" value="${config['table']['width']}"/>
+  <xacro:property name="table_height" value="${config['table']['height']}"/>
+  <xacro:property name="robot_xyz" value="${config['robot']['xyz']}"/>
+  <xacro:property name="robot_rpy" value="${config['robot']['rpy']}"/>
+  <xacro:property name="camera_xyz" value="${config['camera']['xyz']}"/>
+  <xacro:property name="camera_rpy" value="${config['camera']['rpy']}"/>
+  <xacro:property name="barrier_back_offset" value="${config['barriers']['back']}"/>
+  <xacro:property name="barrier_left_offset" value="${config['barriers']['left']}"/>
+  <xacro:property name="barrier_right_offset" value="${config['barriers']['right']}"/>
+  <xacro:property name="barrier_top_offset" value="${config['barriers']['top']}"/>
 
   <material name="gray">
-    <color rgba="0.5 0.5 0.5 1.0"/>
+    <color rgba="0.95 1.0 1.0 1.0"/>
   </material>
 
   <material name="gray_transparent">
-    <color rgba="0.5 0.5 0.5 0.5"/>
+    <color rgba="0.5 0.5 0.5 0.3"/>
   </material>
 
   <material name="red_transparent">
-    <color rgba="1.0 0 0 0.5"/>
+    <color rgba="1.0 0 0 0.3"/>
+  </material>
+
+  <material name="yellow_transparent">
+    <color rgba="1.0 1.0 0 0.3"/>
   </material>
 
   <!-- ========================================================= -->
@@ -394,14 +384,14 @@
         <geometry>
           <box size="${size}"/>
         </geometry>
-        <material name="red_transparent"/>
+        <material name="yellow_transparent"/>
       </visual>
 
       <collision>
         <geometry>
           <box size="${size}"/>
         </geometry>
-        <material name="red_transparent"/>
+        <material name="yellow_transparent"/>
       </collision>
     </link>
 
