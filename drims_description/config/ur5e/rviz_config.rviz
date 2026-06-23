@@ -135,6 +135,10 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         flange:
           Alpha: 1
           Show Axes: false
@@ -320,6 +324,10 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          camera_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           flange:
             Alpha: 1
             Show Axes: false
@@ -512,6 +520,10 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          camera_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           flange:
             Alpha: 1
             Show Axes: false
@@ -631,6 +643,8 @@ Visualization Manager:
           Value: true
         camera_frame_top_bar:
           Value: true
+        camera_link:
+          Value: true
         flange:
           Value: false
         forearm_link:
@@ -708,6 +722,8 @@ Visualization Manager:
                                     {}
                               ft_frame:
                                 {}
+                camera_link:
+                  {}
               camera_frame_front:
                 camera_frame_back:
                   {}
@@ -766,7 +782,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 3.832132339477539
+      Distance: 2.7878150939941406
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -781,10 +797,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.40039917826652527
+      Pitch: 0.1553988754749298
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.705414295196533
+      Yaw: 5.98042106628418
     Saved: ~
 Window Geometry:
   Displays:

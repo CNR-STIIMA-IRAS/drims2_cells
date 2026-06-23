@@ -1,11 +1,19 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription, TimerAction
 from launch.substitutions import PathJoinSubstitution, Command, FindExecutable, LaunchConfiguration
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.actions import Node
 from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import (
+    AndSubstitution,
+    Command,
+    FindExecutable,
+    LaunchConfiguration,
+    NotSubstitution,
+    PathJoinSubstitution,
+)
 
 def launch_setup(context, *args, **kwargs):
   robot_description_content = Command([
@@ -74,13 +82,29 @@ def launch_setup(context, *args, **kwargs):
       condition=UnlessCondition(LaunchConfiguration('fake')),
   )
 
+  dashboard_client_node = Node(
+    package="ur_robot_driver",
+    condition=UnlessCondition(LaunchConfiguration('fake')),
+    executable="dashboard_client",
+    name="dashboard_client",
+    output="screen",
+    emulate_tty=True,
+    parameters=[{"robot_ip": LaunchConfiguration("robot_ip")}],
+  )
+
+  dashboard_client_delayed = TimerAction(
+      period=1.0,
+      actions=[dashboard_client_node]
+  )
+
   what_to_launch = [
     controller_manager_node,
     joint_state_broadcaster_spawner,
     joint_trajectory_controller,
     robot_state_publisher_node,
     robotiq_fake_controller_spawner,
-    robotiq_hande_urcap_launch
+    robotiq_hande_urcap_launch,
+    dashboard_client_delayed
     ]
 
   return what_to_launch

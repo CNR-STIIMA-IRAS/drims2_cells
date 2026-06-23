@@ -7,9 +7,13 @@ robot:
   xyz: "0.4 0.5 0.0"
   rpy: "0.0 0.0 0.0"
 
+camera_frame:
+  xyz: "0.7 1.0 0"
+  rpy: "0 0 -1.57"
+
 camera:
-  xyz: "0.2 0.6 1.2"
-  rpy: "0.0 0.0 0.0"
+  xyz: "0.6 0 0.8"
+  rpy: "3.1415 0 0"
 
 barriers:
   back:  "-0.8  0.0 0.4"

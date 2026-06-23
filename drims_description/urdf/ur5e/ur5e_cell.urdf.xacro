@@ -73,6 +73,8 @@
   <xacro:property name="table_height" value="${config['table']['height']}"/>
   <xacro:property name="robot_xyz" value="${config['robot']['xyz']}"/>
   <xacro:property name="robot_rpy" value="${config['robot']['rpy']}"/>
+  <xacro:property name="camera_frame_xyz" value="${config['camera_frame']['xyz']}"/>
+  <xacro:property name="camera_frame_rpy" value="${config['camera_frame']['rpy']}"/>
   <xacro:property name="camera_xyz" value="${config['camera']['xyz']}"/>
   <xacro:property name="camera_rpy" value="${config['camera']['rpy']}"/>
   <xacro:property name="barrier_back_offset" value="${config['barriers']['back']}"/>
@@ -185,11 +187,7 @@
   </xacro:ur_robot>
 
   <!-- ========================================================= -->
-  <!-- CAMERA -->
-  <!-- ========================================================= -->
-
-  <!-- ========================================================= -->
-  <!-- CAMERA FRAME (RECTANGLE + POST + TOP BAR) -->
+  <!-- CAMERA FRAME -->
   <!-- ========================================================= -->
 
   <xacro:macro name="camera_frame"
@@ -361,17 +359,27 @@
 
   </xacro:macro>
 
-
   <xacro:camera_frame
     name="camera_frame"
     parent="table_top"
-    xyz="0.7 1.0 0"
-    rpy="0 0 -1.57"
+    xyz="${camera_frame_xyz}"
+    rpy="${camera_frame_rpy}"
     frame_x="0.8"
     frame_y="0.6"
     beam="0.05"
     height="0.7"
     post_height="0.8"/>
+
+  <!-- ========================================================= -->
+  <!-- CAMERA -->
+  <!-- ========================================================= -->
+
+  <link name="camera_link"/>
+  <joint name="base_link_to_camera_link" type="fixed">
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+    <origin xyz="${camera_xyz}" rpy="${camera_rpy}"/>
+  </joint>
 
   <!-- ========================================================= -->
   <!-- SAFETY BARRIERS -->

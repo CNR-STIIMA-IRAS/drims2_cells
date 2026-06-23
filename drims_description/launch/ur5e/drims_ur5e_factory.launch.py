@@ -3,6 +3,8 @@ from launch.actions import OpaqueFunction, IncludeLaunchDescription, DeclareLaun
 from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.substitutions import FindPackageShare
+from launch_ros.actions import Node
+from launch.conditions import UnlessCondition
 
 def generate_launch_description():
   launch_args = [
@@ -41,8 +43,21 @@ def launch_setup(context):
       actions=[motion_server_launch]
   )
 
+  ur_startup_node = Node (
+      package = "ur_utils_ros2_py",
+      executable = "restart_ros_control",
+      name = "restart_ros_control",
+      condition = UnlessCondition(LaunchConfiguration('fake')),
+  )
+
+  delayed_ur_startup = TimerAction(
+      period=3.0,
+      actions=[ur_startup_node]
+  )
+
   return [
     launch_moveit,
     launch_controllers_launch,
-    delayed_control_server
+    delayed_control_server,
+    delayed_ur_startup
   ]
