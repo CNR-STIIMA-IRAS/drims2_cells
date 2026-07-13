@@ -37,3 +37,5 @@ motion_server_node:
     # Velocity and acceleration scaling factors
     max_velocity: 0.5
     max_acceleration: 0.5
+
+    planner_id: RRTConnect
