@@ -36,7 +36,7 @@ def generate_launch_description():
     )
 
     motion_server_node = Node(
-        package='drims_motion_server',
+        package='easy_motion',
         executable='motion_server',
         name='motion_server_node',
         output='screen',

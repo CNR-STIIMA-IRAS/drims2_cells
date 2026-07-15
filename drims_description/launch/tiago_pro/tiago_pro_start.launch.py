@@ -41,6 +41,8 @@ def generate_launch_description():
         ),
         launch_arguments={'is_public_sim': 'True',
                           'world_name': 'empty',
+                          'gazebo_version' : 'gazebo',
+                          'gzclient' : 'False',
                           'tuck_arm': 'True'}.items(),
         condition=IfCondition(fake)
     )
