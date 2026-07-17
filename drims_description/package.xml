@@ -11,6 +11,8 @@
 
   <depend>rclcpp</depend>
   <depend>ur_description</depend>
+  <depend>ur_robot_driver</depend>
+  <depend>ur_client_library</depend>
   <depend>robotiq_description</depend>
   <depend>robotiq_hande_driver</depend>
 
