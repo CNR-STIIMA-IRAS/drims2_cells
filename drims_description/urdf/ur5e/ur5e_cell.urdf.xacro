@@ -141,10 +141,11 @@
     <origin xyz="0 0 ${table_height}" rpy="0 0 0"/>
   </joint>
 
+  
   <!-- ========================================================= -->
   <!-- ROBOT -->
   <!-- ========================================================= -->
-
+  
   <xacro:ur_robot
       name="$(arg name)"
       tf_prefix="$(arg tf_prefix)"
@@ -183,8 +184,16 @@
       trajectory_port="$(arg trajectory_port)"
       >
       <origin xyz="${robot_xyz}" rpy="${robot_rpy}"/>
+      
+    </xacro:ur_robot>
 
-  </xacro:ur_robot>
+    <link name="table_top_in_robot_origin"/>
+    <joint name="table_top_to_table_top_in_robot_origin" type="fixed">
+      <parent link="table_top"/>
+      <child link="table_top_in_robot_origin"/>
+      <!-- Same origin as the robot, but keep the table_top orientation. -->
+      <origin xyz="${robot_xyz}" rpy="0 0 0"/>
+    </joint>
 
   <!-- ========================================================= -->
   <!-- CAMERA FRAME -->
@@ -411,19 +420,19 @@
 
   </xacro:macro>
 
-  <xacro:safety_barrier name="barrier_back" parent="base_link"
+  <xacro:safety_barrier name="barrier_back" parent="table_top_in_robot_origin"
     xyz="${barrier_back_offset}"
     size="0.1 ${table_width} 0.8"/>
 
-  <xacro:safety_barrier name="barrier_left" parent="base_link"
+  <xacro:safety_barrier name="barrier_left" parent="table_top_in_robot_origin"
     xyz="${barrier_left_offset}"
     size="${table_length} 0.1 0.8"/>
 
-  <xacro:safety_barrier name="barrier_right" parent="base_link"
+  <xacro:safety_barrier name="barrier_right" parent="table_top_in_robot_origin"
     xyz="${barrier_right_offset}"
     size="${table_length} 0.1 0.8"/>
 
-  <xacro:safety_barrier name="barrier_top" parent="base_link"
+  <xacro:safety_barrier name="barrier_top" parent="table_top_in_robot_origin"
     xyz="${barrier_top_offset}"
     size="${table_length} ${table_width} 0.1"/>
 

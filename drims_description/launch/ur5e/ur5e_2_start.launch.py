@@ -26,12 +26,12 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(inner_launch),
             launch_arguments={
                 "fake": LaunchConfiguration("fake"),
-                "robot_ip": "192.168.254.101",
+                "robot_ip": "192.168.254.102",
                 "cell_configuration_file": PathJoinSubstitution([
                     FindPackageShare("drims_description"),
                     "config",
                     "ur5e",
-                    "configuration_cell_1.yaml"
+                    "configuration_cell_2.yaml"
                 ])
             }.items()
         ),

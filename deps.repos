@@ -71,5 +71,7 @@ repositories:
     type: git
     url: https://github.com/pal-robotics/realsense_gazebo_plugin.git
     version: humble-devel
-
-
+  ur_utils_ros2_py:
+    type: git
+    url: https://github.com/MerlinLaboratory/ur_utils_ros2_py.git
+    version: main
