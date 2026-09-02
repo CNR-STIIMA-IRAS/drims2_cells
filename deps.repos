@@ -14,7 +14,7 @@ repositories:
   robotiq_hande_description:
     type: git
     url: https://github.com/CNR-STIIMA-IRAS/robotiq_hande_description.git
-    version: humble-devel
+    version: drims2026
   robotiq_2f_urcap_adapter:
     type: git
     url: https://github.com/CNR-STIIMA-IRAS/robotiq_2f_urcap_adapter.git
