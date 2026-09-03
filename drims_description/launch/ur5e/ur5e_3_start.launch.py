@@ -13,12 +13,12 @@ def generate_launch_description():
         "ur5e",
         "drims_ur5e_factory.launch.py"
     ])
-    # camera_calibration_launch = PathJoinSubstitution([
-    #     FindPackageShare("drims_description"),
-    #     "launch",
-    #     "ur5e",
-    #     "camera_calibration_cell3.launch.py"
-    # ])
+    camera_calibration_launch = PathJoinSubstitution([
+        FindPackageShare("drims_description"),
+        "launch",
+        "ur5e",
+        "camera_calibration_cell3.launch.py"
+    ])
     return LaunchDescription([
 
         DeclareLaunchArgument(
@@ -41,9 +41,9 @@ def generate_launch_description():
             }.items()
         ),
 
-        # IncludeLaunchDescription(
-        #     PythonLaunchDescriptionSource(camera_calibration_launch),
-        #     launch_arguments={},
-        #     condition=UnlessCondition(LaunchConfiguration('fake'))
-        # )
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(camera_calibration_launch),
+            launch_arguments={},
+            condition=UnlessCondition(LaunchConfiguration('fake'))
+        )
     ])
