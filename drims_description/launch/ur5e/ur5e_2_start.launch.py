@@ -19,7 +19,7 @@ def generate_launch_description():
         FindPackageShare("drims_description"),
         "launch",
         "ur5e",
-        "camera_calibration_cell1.launch.py"
+        "camera_calibration_cell2.launch.py"
     ])
 
     return LaunchDescription([
